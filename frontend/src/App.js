@@ -7,6 +7,7 @@ import {
 } from "react-router-dom"
 import Login from "./component/Login"
 import Leftmenu from "./component/Leftmenu"
+import Orderfood from "./component/Orderfood"
 
 function App() {
   return (
@@ -14,6 +15,9 @@ function App() {
     <div>
       <Router>
         <Switch>
+          <Route path="/orderFood">
+            <Orderfood />
+          </Route>
           <Route path="/users">
             <Leftmenu />
           </Route>

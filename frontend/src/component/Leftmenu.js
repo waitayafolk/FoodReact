@@ -30,7 +30,10 @@ import {
  Link
 } from "react-router-dom"
 import User from './User';
-import Groupproduct from './Groupproduct';
+import TypeFood from './TypeFood';
+import Food from'./Food';
+import OrderUserFood from'./UserOrderFod';
+
 
 
 const drawerWidth = 240;
@@ -127,7 +130,6 @@ export default function Dashboard() {
   };
 
   const page = (url) => {
-   // console.log(url)
    history.push(url)
    window.location.reload()
   }
@@ -193,6 +195,13 @@ export default function Dashboard() {
         <Divider />
         <List>
 
+          <ListItem button onClick={()=>{page("/users/OrderUserFood")}} >
+            <ListItemIcon>
+              <DashboardIcon />
+            </ListItemIcon>
+            <ListItemText primary="Order Food"/>
+          </ListItem>
+
           <ListItem button onClick={()=>{page("/users")}} >
             <ListItemIcon>
               <DashboardIcon />
@@ -200,11 +209,18 @@ export default function Dashboard() {
             <ListItemText primary="User"/>
           </ListItem>
 
-          <ListItem button onClick={()=>{page("/users/groupproduct")}}>
+          <ListItem button onClick={()=>{page("/users/TypeFood")}}>
             <ListItemIcon>
               <DashboardIcon />
             </ListItemIcon>
             <ListItemText primary="Food Type"/>
+          </ListItem>
+
+          <ListItem button onClick={()=>{page("/users/Food")}}>
+            <ListItemIcon>
+              <DashboardIcon />
+            </ListItemIcon>
+            <ListItemText primary="Food"/>
           </ListItem>
 
           <ListItem button onClick={()=>{logout("/")}}>
@@ -224,8 +240,16 @@ export default function Dashboard() {
             <Router>
               <Switch>
 
-                <Route path="/users/groupproduct">
-                 <Groupproduct />
+                <Route path="/users/OrderUserFood">
+                  <OrderUserFood />
+                </Route>
+
+                <Route path="/users/Food">
+                  <Food />
+                </Route>
+
+                <Route path="/users/TypeFood">
+                 <TypeFood />
                 </Route>
 
                 <Route path="/users">

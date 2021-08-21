@@ -185,6 +185,29 @@ app.get('/order/delete_order/:id',(req,res)=>{
     })
 })
 
+app.get('/order/order_serve/:id',(req,res)=>{
+    conpool.query("UPDATE tb_order SET status = 'success' WHERE id = (?)",[req.params.id] , async(err,result)=>{
+        if(err){
+            throw Error(err)
+        }else{
+            res.json({message :'Success'})
+        }
+    })
+})
+
+app.get('/order_detail/load_detailOrder_food/:id',(req,res)=>{
+    conpool.query(`SELECT tb_order_detail.* , tb_food.name_food , tb_food.name_food_en , tb_food.price_food 
+                    FROM tb_order_detail 
+                    LEFT JOIN tb_food on tb_food.id = tb_order_detail.food_id
+                    WHERE tb_order_detail.id_order = (?) AND  tb_order_detail.status != 'delete'`,[req.params.id] , async(err,result)=>{
+        if(result.length > 0 ){
+            res.json(result)
+        }else{
+            res.json({message :'Not fails'})
+        }
+    })
+})
+
 
 
 app.listen(8000, () => {

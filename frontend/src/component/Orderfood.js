@@ -27,6 +27,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import TextField from '@material-ui/core/TextField';
+import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
+import IconButton from '@material-ui/core/IconButton';
 import {
   Paper,
   Table,
@@ -154,7 +156,7 @@ export default function Orderfood() {
     let itemsInproduct = JSON.parse(localStorage.getItem('itemsInCart'))
     let Price = 0
     let itemsInproductCount = 0;
-    if(itemsInproduct === null){
+    if(itemsInproduct == null || itemsInproduct == undefined){
       setCount(0)
       setIndexFood(false)
       setTotalPrice(0)
@@ -186,6 +188,16 @@ export default function Orderfood() {
   const handleChangeReserveData=(e)=>{
     setTable({...table , [e.target.name]: e.target.value})
   }
+
+  const RemoveProduct = (item) => {
+    for (var i = 0; i < indexFood.length; i++)
+    if (indexFood[i].id === item.id) {
+      indexFood.splice(i, 1);
+      localStorage.setItem('itemsInCart', JSON.stringify(indexFood));
+      afterAddItem()
+    }
+  }
+
 
   const SaveOrder = async()=>{
 
@@ -363,6 +375,7 @@ export default function Orderfood() {
                 <TableCell align='center' width='200'>ราคา</TableCell>
                 <TableCell align='center' width='200'>จำนวน</TableCell>
                 <TableCell align='center' width='200'>รวม</TableCell>
+                <TableCell align='center' width='200'></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -374,6 +387,11 @@ export default function Orderfood() {
                   <TableCell align="center">{derlimiter(item.price)}</TableCell>
                   <TableCell align="center">{item.qty}</TableCell>
                   <TableCell align="center">{derlimiter(item.qty * item.price)}</TableCell>
+                  <TableCell align="center">
+                    <IconButton onClick={()=>RemoveProduct(item)} style={{textAlign : 'right'}} aria-label="share">
+                      <RemoveCircleOutlineIcon />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               )}
               </>:null}

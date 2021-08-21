@@ -67,6 +67,124 @@ app.get('/user/delete_user/:id',(req,res)=>{
     })
 })
 
+app.post('/type_food/save_type_food' , (req,res)=>{
+
+    conpool.query("INSERT INTO tb_group_food (group_food_code , name_group_food , name_group_food_en , status) VALUE ( (?) ,(?) ,(?) , 'use' )",
+    [req.body.group_food_code , req.body.name_group_food , req.body.name_group_food_en 
+    ],async(err,result)=>{
+        if(err){
+            throw Error(err)
+        }else{
+            res.json({message :'Save Success'})
+        }
+    })
+})
+
+app.get('/type_food/load_type_food',(req,res)=>{
+    conpool.query("SELECT * FROM tb_group_food WHERE status != 'delete'",[],async(err,result)=>{
+        if(err){
+            throw Error(err)
+        }
+        if(result.length > 0 ){
+            res.json(result)
+        }else{
+            res.json({message :'Not fails'})
+        }
+    })
+})
+
+app.get('/type_food/delete_type_food/:id',(req,res)=>{
+    conpool.query("UPDATE tb_group_food SET status = 'delete' WHERE id = (?)",[req.params.id] , async(err,result)=>{
+        if(err){
+            throw Error(err)
+        }else{
+            res.json({message :'Success'})
+        }
+    })
+})
+
+app.post('/food/save_food' , (req,res)=>{
+    // console.log(req.body)
+    conpool.query("INSERT INTO tb_food (name_food , name_food_en , price_food ,detail_food , status) VALUE ( (?) ,(?) ,(?)  , (?) , 'use' )",
+    [req.body.name_food , req.body.name_food_en , req.body.price_food  ,  req.body.detail_food
+    ],async(err,result)=>{
+        if(err){
+            throw Error(err)
+        }else{
+            res.json({message :'Save Success'})
+        }
+    })
+})
+
+app.get('/food/load_food',(req,res)=>{
+    conpool.query("SELECT * FROM tb_food WHERE status != 'delete'",[],async(err,result)=>{
+        if(err){
+            throw Error(err)
+        }
+        if(result.length > 0 ){
+            res.json(result)
+        }else{
+            res.json({message :'Not fails'})
+        }
+    })
+})
+
+app.get('/food/delete_food/:id',(req,res)=>{
+    conpool.query("UPDATE tb_food SET status = 'delete' WHERE id = (?)",[req.params.id] , async(err,result)=>{
+        if(err){
+            throw Error(err)
+        }else{
+            res.json({message :'Success'})
+        }
+    })
+})
+
+app.post('/order/save_order' , (req,res)=>{
+    conpool.query("INSERT INTO tb_order (customer_name , customer_table , status) VALUE ( (?) ,(?) , 'wait' )",
+    [req.body.customer_name , req.body.customer_table],async(err,result)=>{
+        if(err){
+            throw Error(err)
+        }else{
+            let id_order = result.insertId
+            let query = "INSERT INTO `tb_order_detail`(`id_order`, `food_id`, `qty`,`status`)  VALUES(?)";
+                    for (const item of req.body.food) {
+                        await conpool.query(query, [
+                            [
+                                id_order,
+                                item.id , 
+                                item.qty , 
+                                'use'
+                            ]
+                        ]);
+                    }
+            res.json({message :'Save Success'})
+        }
+    })
+})
+
+app.get('/order_food/load_Order_user',(req,res)=>{
+    conpool.query("SELECT * FROM tb_order WHERE status != 'delete'",[],async(err,result)=>{
+        if(err){
+            throw Error(err)
+        }
+        if(result.length > 0 ){
+            res.json(result)
+        }else{
+            res.json({message :'Not fails'})
+        }
+    })
+})
+
+app.get('/order/delete_order/:id',(req,res)=>{
+    conpool.query("UPDATE tb_order SET status = 'delete' WHERE id = (?)",[req.params.id] , async(err,result)=>{
+        if(err){
+            throw Error(err)
+        }else{
+            res.json({message :'Success'})
+        }
+    })
+})
+
 
 
 app.listen(8000, () => {

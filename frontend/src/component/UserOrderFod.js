@@ -22,6 +22,9 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Swal from 'sweetalert2';
+import DetailsIcon from '@material-ui/icons/Details';
+import DetailOrder from './modal/detail';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     '& > *': {
@@ -35,20 +38,20 @@ export default function UserOrderFod() {
   const [showModal , setShowModal] = useState(false)
   const [user , setUser] = useState(false)
   const [level , setLevel] = useState("admin")
-  const [userlist , setUserlist] = useState(false)
-
+  const [orderlist , setOrderlist] = useState(false)
+  const [detailorder , setdetail] = useState(false)
+  const [modaldetail , setModaldetail] = useState(false)
   useEffect(()=>{
    LoadUser()
   },[])
 
   const LoadUser = async()=>{
-   let url = hostname + '/user/load_user'
+   let url = hostname + '/order_food/load_Order_user'
    let rs = await axios.get(url)
-   // console.log(rs.data)
-   setUserlist(rs.data)
+   setOrderlist(rs.data)
   }
   const handleClose = () => {
-   setShowModal(false);
+    setModaldetail(false);
   };
 
   const handleChangeReserveData=(e)=>{
@@ -58,36 +61,16 @@ export default function UserOrderFod() {
   const handleChange = (e) => {
    setLevel(e.target.value);
   };
-  const SaveUser = async() =>{
-   let url = hostname + '/user/save_user'
-   let rs = await axios.post(url,{
-    name : user.name , 
-    username : user.username,
-    password : user.password,
-    level : level
-   })
-   if(rs.data.message == 'Save Success'){
-    setShowModal(false);
-    LoadUser()
-    Swal.fire({
-     icon: 'success',
-     title: 'Save Success',
-     showConfirmButton: false,
-     timer: 1500
-    })
-   }else{
-    Swal.fire({
-     icon: 'Error',
-     title: 'Save Error',
-     showConfirmButton: false,
-     timer: 1500
-    })
-   }
-  }
 
-  const deleteUser =  (item)=>{
+  const detail = (item) => {
+    setModaldetail(true)
+    setdetail(item)
+   };
+
+
+  const deleteOrder =  (item)=>{
    Swal.fire({
-    title: 'จะลบ User นี้หรือไม่?',
+    title: 'จะลบ Order นี้หรือไม่?',
     text: "คุณต้องการลบใช่ไหม!",
     icon: 'warning',
     showCancelButton: true,
@@ -96,7 +79,7 @@ export default function UserOrderFod() {
     confirmButtonText: 'Yes, delete it!'
   }).then(async(result) => {
     if (result.isConfirmed) {
-     let url = hostname + '/user/delete_user/'+item.id
+     let url = hostname + '/order/delete_order/'+item.id
      let rs = await axios.get(url)
      if(rs.data.message == "Success"){
       Swal.fire({
@@ -124,32 +107,42 @@ export default function UserOrderFod() {
        <Table className={classes.table} aria-label="simple table">
          <TableHead>
            <TableRow>
-             <TableCell>ชื่อผู้ใช้งานระบบ</TableCell>
-             <TableCell align="right">Username</TableCell>
-             <TableCell align="right">Level</TableCell>
+             <TableCell>ชื่อผู้สั่ง </TableCell>
+             <TableCell align="right">โต๊ะ</TableCell>
+             <TableCell align="right">สถานะ</TableCell>
              <TableCell align="right"></TableCell>
            </TableRow>
          </TableHead>
          <TableBody>
-          {(userlist.length > 0) ? 
+          {(orderlist.length > 0) ? 
               <>
-               {userlist.map((item) => (
+               {orderlist.map((item) => (
              <TableRow>
                <TableCell component="th" scope="row">
-                 {item.name}
+                 {item.customer_name}
                </TableCell>
-               <TableCell align="right">{item.username}</TableCell>
-               <TableCell align="right">{item.level}</TableCell>
+               <TableCell align="right">{item.customer_table}</TableCell>
+               <TableCell align="right">{item.status}</TableCell>
                <TableCell align="right">
                 <Button
-                    onClick={()=>{deleteUser(item)}}
+                    onClick={()=>{deleteOrder(item)}}
                     variant="contained"
                     color="secondary"
                     className={classes.button}
                     startIcon={<DeleteIcon />}
-                  >
+                >
                     Delete
-                  </Button>
+                </Button>
+                &nbsp;
+                <Button
+                    onClick={()=>{detail(item)}}
+                    variant="contained"
+                    color="primary"
+                    className={classes.button}
+                    startIcon={<DetailsIcon />}
+                >
+                    รายละเอียด
+                </Button>
                </TableCell>
              </TableRow>
            ))}
@@ -158,6 +151,13 @@ export default function UserOrderFod() {
          </TableBody>
        </Table>
      </TableContainer>
+     <DetailOrder
+      show = {detailorder}
+      data = {modaldetail}
+      onClose={handleClose}
+     />
    </>
   );
 }
+
+

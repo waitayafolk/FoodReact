@@ -34,38 +34,34 @@ const useStyles = makeStyles((theme) => ({
 export default function Food() {
   const classes = useStyles();
   const [showModal , setShowModal] = useState(false)
-  const [user , setUser] = useState(false)
-  const [level , setLevel] = useState("admin")
-  const [userlist , setUserlist] = useState(false)
+  const [food , setFood] = useState(false)
+  // const [level , setLevel] = useState("admin")
+  const [foodlist , setFoodlist] = useState(false)
 
   useEffect(()=>{
     LoadTpefood()
   },[])
 
   const LoadTpefood = async()=>{
-   let url = hostname + '/user/load_user'
+   let url = hostname + '/food/load_food'
    let rs = await axios.get(url)
-  //  setUserlist(rs.data)
+   setFoodlist(rs.data)
   }
   const handleClose = () => {
    setShowModal(false);
   };
 
   const handleChangeReserveData=(e)=>{
-   setUser({...user , [e.target.name]: e.target.value})
+    setFood({...food , [e.target.name]: e.target.value})
   }
-
-  // const handleChange = (e) => {
-  //  setLevel(e.target.value);
-  // };
-
-  const SaveTypefood = async() =>{
-   let url = hostname + '/user/save_user'
+  
+  const Savefood = async() =>{
+   let url = hostname + '/food/save_food'
    let rs = await axios.post(url,{
-    name : user.name , 
-    username : user.username,
-    password : user.password,
-    level : level
+    name_food : food.name_food , 
+    name_food_en : food.name_food_en,
+    price_food : Number(food.price_food),
+    detail_food : food.detail_food
    })
    if(rs.data.message == 'Save Success'){
     setShowModal(false);
@@ -86,9 +82,9 @@ export default function Food() {
    }
   }
 
-  const deleteUser =  (item)=>{
+  const deleteFood =  (item)=>{
    Swal.fire({
-    title: 'จะลบ User นี้หรือไม่?',
+    title: 'จะลบ รายการอาหาร นี้หรือไม่?',
     text: "คุณต้องการลบใช่ไหม!",
     icon: 'warning',
     showCancelButton: true,
@@ -97,7 +93,7 @@ export default function Food() {
     confirmButtonText: 'Yes, delete it!'
   }).then(async(result) => {
     if (result.isConfirmed) {
-     let url = hostname + '/user/delete_user/'+item.id
+     let url = hostname + '/food/delete_food/'+item.id
      let rs = await axios.get(url)
      if(rs.data.message == "Success"){
       Swal.fire({
@@ -127,13 +123,13 @@ export default function Food() {
         เพิ่ม รายการอาหาร
       </Button>
     </div>
-    <Dialog
-        open={showModal}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-    >
-     <DialogTitle id="alert-dialog-title">{"User Account"}</DialogTitle>
+      <Dialog
+          open={showModal}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+      >
+     <DialogTitle id="alert-dialog-title">{"เพิ่ม รายการอาหาร"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
           <form className={classes.form} noValidate>
@@ -142,9 +138,9 @@ export default function Food() {
               margin="normal"
               required
               fullWidth
-              id="name"
+              id="name_food"
               label="ชื่อ"
-              name="name"
+              name="name_food"
               autoFocus
               onChange={handleChangeReserveData}
             />
@@ -153,10 +149,9 @@ export default function Food() {
               margin="normal"
               required
               fullWidth
-              id="name_eng"
+              id="name_food_en"
               label="ชื่อภาษาอังกฤษ"
-              name="name_eng"
-              autoFocus
+              name="name_food_en"
               onChange={handleChangeReserveData}
             />
             <TextField
@@ -164,10 +159,10 @@ export default function Food() {
               margin="normal"
               required
               fullWidth
-              name="code_food"
-              label="รหัสประเภทอาหาร"
-              type="text"
-              id="code_food"
+              name="price_food"
+              label="ราคา"
+              type="number"
+              id="price_food"
               onChange={handleChangeReserveData}
             />
             <TextField
@@ -175,10 +170,9 @@ export default function Food() {
               margin="normal"
               required
               fullWidth
-              id="detail"
+              id="detail_food"
               label="รายละเอียดอาหาร"
-              name="detail"
-              autoFocus
+              name="detail_food"
               onChange={handleChangeReserveData}
             />
              <div>
@@ -187,7 +181,7 @@ export default function Food() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={()=>{SaveTypefood()}} color="primary">
+          <Button onClick={()=>{Savefood()}} color="primary">
             Save
           </Button>
         </DialogActions>
@@ -198,25 +192,25 @@ export default function Food() {
        <Table className={classes.table} aria-label="simple table">
          <TableHead>
            <TableRow>
-             <TableCell align="center">รหัสประเภทอาหาร</TableCell>
-             <TableCell align="center">ชื่อ</TableCell>
+             <TableCell align="center">ชื่ออาหาร</TableCell>
              <TableCell align="center">ชื่อภาษาอังกฤษ</TableCell>
+             <TableCell align="right">ราคา</TableCell>
+             <TableCell align="center">รายละเอียดอาหาร</TableCell>
              <TableCell align="center"></TableCell>
            </TableRow>
          </TableHead>
          <TableBody>
-          {(userlist.length > 0) ? 
+          {(foodlist.length > 0) ? 
               <>
-               {userlist.map((item) => (
+               {foodlist.map((item) => (
              <TableRow>
-               <TableCell component="th" scope="row">
-                 {item.code}
-               </TableCell>
-               <TableCell align="right">{item.name}</TableCell>
-               <TableCell align="right">{item.name_eng}</TableCell>
-               <TableCell align="right">
+               <TableCell component="th" align="center" scope="row" style={{minWidth : 150}}>{item.name_food}</TableCell>
+               <TableCell align="center" style={{minWidth : 150}}>{item.name_food_en}</TableCell>
+               <TableCell align="right" style={{minWidth : 150}}>{item.price_food}</TableCell>
+               <TableCell align="center" style={{minWidth : 150}} >{item.detail_food}</TableCell>
+               <TableCell align="center">
                 <Button
-                    onClick={()=>{deleteUser(item)}}
+                    onClick={()=>{deleteFood(item)}}
                     variant="contained"
                     color="secondary"
                     className={classes.button}

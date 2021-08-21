@@ -34,38 +34,34 @@ const useStyles = makeStyles((theme) => ({
 export default function Groupproduct() {
   const classes = useStyles();
   const [showModal , setShowModal] = useState(false)
-  const [user , setUser] = useState(false)
-  const [level , setLevel] = useState("admin")
-  const [userlist , setUserlist] = useState(false)
+  const [typefood , setTypefood] = useState(false)
+  const [typefoodlist , setTypefoodlist] = useState(false)
 
   useEffect(()=>{
     LoadTpefood()
   },[])
 
   const LoadTpefood = async()=>{
-   let url = hostname + '/user/load_user'
+   let url = hostname + '/type_food/load_type_food'
    let rs = await axios.get(url)
-  //  setUserlist(rs.data)
+   setTypefoodlist(rs.data)
   }
   const handleClose = () => {
    setShowModal(false);
   };
 
   const handleChangeReserveData=(e)=>{
-   setUser({...user , [e.target.name]: e.target.value})
+    setTypefood({...typefood , [e.target.name]: e.target.value})
   }
 
-  // const handleChange = (e) => {
-  //  setLevel(e.target.value);
-  // };
 
   const SaveTypefood = async() =>{
-   let url = hostname + '/user/save_user'
+    // console.log(typefood)
+   let url = hostname + '/type_food/save_type_food'
    let rs = await axios.post(url,{
-    name : user.name , 
-    username : user.username,
-    password : user.password,
-    level : level
+    group_food_code : typefood.group_food_code , 
+    name_group_food : typefood.name_group_food,
+    name_group_food_en : typefood.name_group_food_en
    })
    if(rs.data.message == 'Save Success'){
     setShowModal(false);
@@ -86,9 +82,9 @@ export default function Groupproduct() {
    }
   }
 
-  const deleteUser =  (item)=>{
+  const deleteTypeFood =  (item)=>{
    Swal.fire({
-    title: 'จะลบ User นี้หรือไม่?',
+    title: 'จะลบ ประเภทอาหาร นี้หรือไม่?',
     text: "คุณต้องการลบใช่ไหม!",
     icon: 'warning',
     showCancelButton: true,
@@ -97,7 +93,7 @@ export default function Groupproduct() {
     confirmButtonText: 'Yes, delete it!'
   }).then(async(result) => {
     if (result.isConfirmed) {
-     let url = hostname + '/user/delete_user/'+item.id
+     let url = hostname + '/type_food/delete_type_food/'+item.id
      let rs = await axios.get(url)
      if(rs.data.message == "Success"){
       Swal.fire({
@@ -133,7 +129,7 @@ export default function Groupproduct() {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
     >
-     <DialogTitle id="alert-dialog-title">{"User Account"}</DialogTitle>
+     <DialogTitle id="alert-dialog-title">{"เพิ่ม ประเภทอาหาร"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
           <form className={classes.form} noValidate>
@@ -142,9 +138,9 @@ export default function Groupproduct() {
               margin="normal"
               required
               fullWidth
-              id="name"
+              id="name_group_food"
               label="ชื่อ"
-              name="name"
+              name="name_group_food"
               autoFocus
               onChange={handleChangeReserveData}
             />
@@ -153,10 +149,9 @@ export default function Groupproduct() {
               margin="normal"
               required
               fullWidth
-              id="name_eng"
+              id="name_group_food_en"
               label="ชื่อภาษาอังกฤษ"
-              name="name_eng"
-              autoFocus
+              name="name_group_food_en"
               onChange={handleChangeReserveData}
             />
             <TextField
@@ -164,10 +159,10 @@ export default function Groupproduct() {
               margin="normal"
               required
               fullWidth
-              name="code_food"
+              name="group_food_code"
               label="รหัสประเภทอาหาร"
               type="text"
-              id="code_food"
+              id="group_food_code"
               onChange={handleChangeReserveData}
             />
              <div>
@@ -194,18 +189,16 @@ export default function Groupproduct() {
            </TableRow>
          </TableHead>
          <TableBody>
-          {(userlist.length > 0) ? 
+          {(typefoodlist.length > 0) ? 
               <>
-               {userlist.map((item) => (
+               {typefoodlist.map((item) => (
              <TableRow>
-               <TableCell component="th" scope="row">
-                 {item.code}
-               </TableCell>
-               <TableCell align="right">{item.name}</TableCell>
-               <TableCell align="right">{item.name_eng}</TableCell>
-               <TableCell align="right">
+               <TableCell align="center" component="th" scope="row">{item.group_food_code}</TableCell>
+               <TableCell align="center">{item.name_group_food}</TableCell>
+               <TableCell align="center">{item.name_group_food_en}</TableCell>
+               <TableCell align="center">
                 <Button
-                    onClick={()=>{deleteUser(item)}}
+                    onClick={()=>{deleteTypeFood(item)}}
                     variant="contained"
                     color="secondary"
                     className={classes.button}

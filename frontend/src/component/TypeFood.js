@@ -56,7 +56,6 @@ export default function Groupproduct() {
 
 
   const SaveTypefood = async() =>{
-    // console.log(typefood)
    let url = hostname + '/type_food/save_type_food'
    let rs = await axios.post(url,{
     group_food_code : typefood.group_food_code , 

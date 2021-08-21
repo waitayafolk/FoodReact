@@ -155,6 +155,7 @@ export default function Orderfood() {
     let Price = 0
     let itemsInproductCount = 0;
     if(itemsInproduct === null){
+      setCount(0)
       setIndexFood(false)
       setTotalPrice(0)
     }else{

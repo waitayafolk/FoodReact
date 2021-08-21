@@ -35,7 +35,6 @@ export default function Food() {
   const classes = useStyles();
   const [showModal , setShowModal] = useState(false)
   const [food , setFood] = useState(false)
-  // const [level , setLevel] = useState("admin")
   const [foodlist , setFoodlist] = useState(false)
 
   useEffect(()=>{

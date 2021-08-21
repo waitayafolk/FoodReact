@@ -44,7 +44,6 @@ export default function User() {
   const LoadUser = async()=>{
    let url = hostname + '/user/load_user'
    let rs = await axios.get(url)
-   // console.log(rs.data)
    setUserlist(rs.data)
   }
   const handleClose = () => {

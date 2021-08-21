@@ -134,7 +134,7 @@ export default function UserOrderFod() {
                     Delete
                 </Button>
                 &nbsp;
-                <Button
+                {/* <Button
                     onClick={()=>{detail(item)}}
                     variant="contained"
                     color="primary"
@@ -142,7 +142,7 @@ export default function UserOrderFod() {
                     startIcon={<DetailsIcon />}
                 >
                     รายละเอียด
-                </Button>
+                </Button> */}
                </TableCell>
              </TableRow>
            ))}
